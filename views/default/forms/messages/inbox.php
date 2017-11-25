@@ -27,27 +27,25 @@ $messages = $inbox->getMessages(array(
 	'offset' => $offset,
 		));
 
-if ($threaded && $messages) {
-	$latest_messages = array();
-	// Fix for 'GROUP_BY' statememtn returning wrong order
-	foreach ($messages as $msg) {
-		$lastMsg = $msg->getVolatileData('select:lastMsg');
-		if ($lastMsg && $lastMsg != $msg->guid) {
-			$latest_messages[] = get_entity($lastMsg);
-		} else {
-			$latest_messages[] = $msg;
-		}
+$latest_messages = array();
+// Fix for 'GROUP_BY' statememtn returning wrong order
+foreach ($messages as $msg) {
+	$lastMsg = $msg->getVolatileData('select:lastMsg');
+	if ($lastMsg && $lastMsg != $msg->guid) {
+		$latest_messages[] = get_entity($lastMsg);
+	} else {
+		$latest_messages[] = $msg;
 	}
-	$messages = $latest_messages;
 }
+$messages = $latest_messages;
 
-$params = array(
+$params = [
 	'items' => $messages,
 	'limit' => $limit,
 	'offset' => $offset,
 	'count' => $count,
 	'threaded' => $threaded,
-);
+];
 
 elgg_push_context('inbox-form');
 echo elgg_view('framework/inbox/controls/inbox', $params);
@@ -56,7 +54,7 @@ echo elgg_view('input/hidden', [
 	'name' => 'threaded',
 	'value' => $threaded,
 ]);
-echo elgg_view('input/submit', array(
+echo elgg_view('input/submit', [
 	'class' => 'hidden',
-));
+]);
 elgg_pop_context();
